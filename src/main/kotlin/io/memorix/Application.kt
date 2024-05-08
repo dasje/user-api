@@ -13,12 +13,13 @@ import org.koin.core.logger.Level
 import org.koin.core.logger.PrintLogger
 import org.koin.environmentProperties
 
+//fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun main() {
     embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
-
 fun Application.module() {
+//    println("ENV HERE ${environment.config.propertyOrNull("storage.jdbcURL")?.getString()}")
     startKoin()
     configureHTTP()
     configureSerialization()
@@ -31,7 +32,7 @@ fun startKoin(): Koin = startKoin {
     properties(
         dotenv {
             ignoreIfMalformed = true
-            ignoreIfMissing = true
+            ignoreIfMissing = false
         }
             .entries()
             .associate {
