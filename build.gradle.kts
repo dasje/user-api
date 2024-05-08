@@ -22,6 +22,7 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+
 repositories {
     mavenCentral()
 }
@@ -37,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-default-headers-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-config-yaml:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
     implementation("io.github.cdimascio:dotenv-kotlin:$dotenv_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")

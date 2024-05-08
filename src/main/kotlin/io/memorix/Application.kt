@@ -8,13 +8,14 @@ import io.memorix.plugins.*
 import io.memorix.user.userDi
 import org.koin.core.Koin
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
+import org.koin.core.logger.PrintLogger
 import org.koin.environmentProperties
 
 fun main() {
     embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
-
 fun Application.module() {
     startKoin()
     configureHTTP()
@@ -23,10 +24,12 @@ fun Application.module() {
 }
 
 fun startKoin(): Koin = startKoin {
+    logger(PrintLogger(Level.DEBUG))
+
     properties(
         dotenv {
             ignoreIfMalformed = true
-            ignoreIfMissing = true
+            ignoreIfMissing = false
         }
             .entries()
             .associate {
@@ -40,4 +43,7 @@ fun startKoin(): Koin = startKoin {
         applicationDi,
         userDi
     )
+
+    createEagerInstances()
+
 }.koin
