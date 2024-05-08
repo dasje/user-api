@@ -1,14 +1,24 @@
 package io.memorix
 
-import org.jetbrains.exposed.sql.Database
+import io.memorix.database.DBConnector
+import io.memorix.database.DBConnectorFacade
+import org.koin.core.module.dsl.createdAtStart
+import org.koin.core.module.dsl.withOptions
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
+import io.ktor.server.routing.*
+import java.lang.System.getProperty
 
 val applicationDi = module {
-    single<Database> {
-        Database.connect(
-            url = "jdbc:postgresql://" + getProperty("DB_HOST") + ":" + getProperty("DB_PORT") + "/" + getProperty("DB_NAME") + "?sslmode=disable",
-            user = getProperty("DB_USER"),
-            password = getProperty("DB_PASS")
+    single<DBConnectorFacade> {
+        DBConnector(
+            dbHost = getProperty("DB_HOST"),
+            dbName = getProperty("DB_NAME"),
+            dbPass = getProperty("DB_PASS"),
+            dbPort = getProperty("DB_PORT"),
+            dbUser = getProperty("DB_USER")
         )
+    } withOptions {
+        createdAtStart()
     }
 }

@@ -17,7 +17,8 @@ fun Application.configureRouting() {
     install(Resources)
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
+            call.respondText(text = "500: ${cause}", status = HttpStatusCode.InternalServerError)
+            cause.printStackTrace()
         }
     }
     routing {
