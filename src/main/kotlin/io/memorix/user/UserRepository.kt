@@ -38,17 +38,12 @@ class UserRepository(
         var email = newUser.email
         // TODO: hash incoming password
         var hashedPwd = newUser.password
-        lateinit var insertStatement: InsertStatement<Number>
-        coroutineScope {
-            launch {
-                insertStatement = database.dbQuery {
-                    Users.insert {
-                        it[Users.id] = newId
-                        it[Users.userName] = name
-                        it[Users.userEmail] = email
-                        it[Users.hashedPassword] = hashedPwd
-                    }
-                }
+        var insertStatement: InsertStatement<Number> = database.dbQuery {
+            Users.insert {
+                it[Users.id] = newId
+                it[Users.userName] = name
+                it[Users.userEmail] = email
+                it[Users.hashedPassword] = hashedPwd
             }
         }
         var user = insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToNewUser)

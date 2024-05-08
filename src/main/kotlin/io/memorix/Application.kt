@@ -4,7 +4,6 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.memorix.database.DBConnector
 import io.memorix.plugins.*
 import io.memorix.user.userDi
 import org.koin.core.Koin
@@ -13,13 +12,11 @@ import org.koin.core.logger.Level
 import org.koin.core.logger.PrintLogger
 import org.koin.environmentProperties
 
-//fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun main() {
     embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 fun Application.module() {
-//    println("ENV HERE ${environment.config.propertyOrNull("storage.jdbcURL")?.getString()}")
     startKoin()
     configureHTTP()
     configureSerialization()

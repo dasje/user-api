@@ -32,25 +32,4 @@ class DBConnector(
 
     override suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
-
-//    fun init() {
-//        println("DBConnector being inited")
-//        val driver = "org.postgresql.Driver"
-//        val dbUser = System.getenv("DB_USER")
-//        val dbPwd = System.getenv("DB_PASS")
-//        val dbHost = System.getenv("DB_HOST")
-//        val dbPort = System.getenv("DB_PORT")
-//        val dbName = System.getenv("DB_NAME")
-//        println("HERE ${dbUser}")
-//
-//        val url = "jdbc:postgresql://$dbHost:$dbPort/$dbName?sslmode=disable"
-//
-//        val db = Database.connect(url = url, user = dbUser, password = dbPwd, driver = driver)
-//
-//        transaction(db) {
-//            SchemaUtils.create(Users)
-//        }
-//    }
-//    override suspend fun <T> dbQuery(block: suspend () -> T): T =
-//        newSuspendedTransaction(Dispatchers.IO) { block() }
 }
