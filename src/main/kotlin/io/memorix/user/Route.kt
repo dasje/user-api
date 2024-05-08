@@ -25,10 +25,13 @@ fun Route.user() {
 //             call.respond(user)
 //         }
         post {
-            val user = call.receive<NewUser>()
+            val user = call.receiveNullable<NewUser>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
+
             var res = repository.addUser(user)
-            println(res)
-            call.respondText("User stored correctly.", status = HttpStatusCode.Created)
+            call.respondText(res.toString(), status = HttpStatusCode.Created)
         }
 //        delete("{id?}") {
 //            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
