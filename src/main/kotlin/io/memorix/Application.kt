@@ -4,10 +4,13 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
+import io.memorix.database.DBConnector
 import io.memorix.plugins.*
 import io.memorix.user.userDi
 import org.koin.core.Koin
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
+import org.koin.core.logger.PrintLogger
 import org.koin.environmentProperties
 
 fun main() {
@@ -23,6 +26,8 @@ fun Application.module() {
 }
 
 fun startKoin(): Koin = startKoin {
+    logger(PrintLogger(Level.DEBUG))
+
     properties(
         dotenv {
             ignoreIfMalformed = true
@@ -40,4 +45,7 @@ fun startKoin(): Koin = startKoin {
         applicationDi,
         userDi
     )
+
+    createEagerInstances()
+
 }.koin
