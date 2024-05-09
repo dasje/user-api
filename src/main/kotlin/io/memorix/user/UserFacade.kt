@@ -6,7 +6,7 @@ import io.memorix.messages.QueryUsersResponse
 import java.util.UUID
 
 interface UserFacade {
-    suspend fun findUsers(nameFragment: String): QueryUsersResponse?
+    suspend fun findUsers(nameFragment: String, limitValue: Int): OutgoingMessage<QueryUsersResponse>?
     suspend fun addUser(newUser: NewUser): OutgoingMessage<Boolean>?
     suspend fun removeUser(id: UUID): Boolean
 }

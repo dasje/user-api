@@ -1,6 +1,6 @@
 package io.memorix.database
 
-import io.memorix.user.Users
+import io.memorix.database.tables.Users
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

@@ -4,8 +4,9 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
+import io.memorix.modules.applicationDi
 import io.memorix.plugins.*
-import io.memorix.user.userDi
+import io.memorix.modules.userDi
 import org.koin.core.Koin
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level

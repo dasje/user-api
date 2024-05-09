@@ -3,7 +3,7 @@ package io.memorix.messages
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Errors(
+data class ErrorDetails(
     val error: String
 )
 

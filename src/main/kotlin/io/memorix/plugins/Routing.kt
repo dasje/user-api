@@ -8,9 +8,9 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.Resources
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.memorix.messages.ErrorDetails
 import io.memorix.messages.ErrorTypes
-import io.memorix.messages.Errors
-import io.memorix.user.user
+import io.memorix.routes.user
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
@@ -22,7 +22,7 @@ fun Application.configureRouting() {
                 is BadRequestException ->
                     call.respond(
                         status = HttpStatusCode.BadRequest,
-                        message = Errors(error = ErrorTypes.UNPARSEABLE_MESSAGE.errorDetail)
+                        message = ErrorDetails(error = ErrorTypes.UNPARSEABLE_MESSAGE.errorDetail)
                     )
                 /* Respond in all other cases with InternalServerError. */
                 else -> call.respondText(text = "500: ${cause}", status = HttpStatusCode.InternalServerError)
