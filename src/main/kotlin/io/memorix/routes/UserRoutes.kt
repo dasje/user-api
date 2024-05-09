@@ -16,17 +16,19 @@ fun Route.user() {
     route(Routes.USERS_ROUTE) {
 
          get {
-             val queryValue = call.request.queryParameters["query"] ?: return@get call.respondText(
-                 "Missing query value.",
-                 status = HttpStatusCode.BadRequest
-             )
-             var limitValue = call.request.queryParameters["limit"] ?: return@get call.respondText(
+             val queryValue = call.request.queryParameters["query"]
+             if (queryValue.isNullOrBlank()) {
+                 return@get call.respondText(
+                     "Missing query value.",
+                     status = HttpStatusCode.BadRequest
+                 )
+             }
+             var limitValue = call.request.queryParameters["limit"]?.toIntOrNull() ?: return@get call.respondText(
                  "Missing limit value.",
                  status = HttpStatusCode.BadRequest
              )
-             println("QUERY $queryValue, $limitValue")
-             val res = repository.findUsers(queryValue, limitValue.toInt())
-             println(res)
+
+             val res = repository.findUsers(queryValue, limitValue)
              when (res) {
                  is OutgoingMessage.Error ->
                      call.respondText(res.toJson(), status = HttpStatusCode.BadRequest)
