@@ -1,4 +1,4 @@
-package io.memorix.user
+package io.memorix.messages
 
 import kotlinx.serialization.Serializable
 
@@ -7,11 +7,6 @@ data class NewUser(
     val name: String,
     val email: String,
     val password: String,
-)
-
-@Serializable
-data class AddUserError(
-    val error: String
 )
 
 @Serializable
