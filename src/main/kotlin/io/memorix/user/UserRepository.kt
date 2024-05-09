@@ -35,12 +35,11 @@ class UserRepository(
     override suspend fun findUsers(nameFragment: String, limitValue: Int): OutgoingMessage<QueryUsersResponse>? {
         try {
             var selectedUsers: List<UserResponse> = database.dbQuery {
-                Users.selectAll().andWhere { Users.userName regexp nameFragment }.limit(limitValue).map(::resultRowsToFoundUsers)
+                Users.selectAll().andWhere { Users.userName regexp "^${nameFragment}" }.limit(limitValue).map(::resultRowsToFoundUsers)
             }
             var userResponse = QueryUsersResponse(selectedUsers, selectedUsers.size)
             return OutgoingMessage.SuccessUserResults(userResponse)
         } catch (e: Exception) {
-            println(e)
             return OutgoingMessage.Error(error = e.localizedMessage)
         }
     }
