@@ -1,7 +1,8 @@
 package io.memorix.user
 
-import io.memorix.Authentication.Authentication
+import io.memorix.Authentication.PasswordAuthentication
 import io.memorix.database.DBConnectorFacade
+import io.memorix.messages.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -22,11 +23,19 @@ class UserRepository(
         name = resultRow[Users.userEmail]
     )
 
-    override suspend fun addUser(newUser: NewUser): NewUser? {
+    suspend fun findUserEmail(email: String): Boolean = database.dbQuery {
+        !Users.select { Users.userEmail eq email }.empty()
+    }
+
+    override suspend fun addUser(newUser: NewUser): OutgoingMessage<Boolean>? {
+        if (findUserEmail(newUser.email)) {
+            println("USER EXISTS ${findUserEmail(newUser.name)}")
+            return OutgoingMessage.Error(error = "Duplicate e-mail: ${newUser.email}")
+        }
         var newId = UUID.randomUUID()
         var name = newUser.name
         var email = newUser.email
-        var hashedPwd = Authentication.hashPassword(newUser.password)
+        var hashedPwd = PasswordAuthentication.hashPassword(newUser.password)
         var insertStatement: InsertStatement<Number> = database.dbQuery {
             Users.insert {
                 it[Users.id] = newId
@@ -36,7 +45,7 @@ class UserRepository(
             }
         }
         var user = insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToNewUser)
-        return user
+        return OutgoingMessage.Success(true)
     }
 
     private fun resultRowToNewUser(resultRow: ResultRow) = NewUser(
