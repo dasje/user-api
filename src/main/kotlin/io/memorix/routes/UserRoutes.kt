@@ -1,13 +1,13 @@
-package io.memorix.user
+package io.memorix.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.memorix.Routes
 import io.memorix.messages.NewUser
 import io.memorix.messages.OutgoingMessage
+import io.memorix.user.UserRepository
 import org.koin.ktor.ext.inject
 
 fun Route.user() {

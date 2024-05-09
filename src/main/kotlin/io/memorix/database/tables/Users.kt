@@ -1,4 +1,4 @@
-package io.memorix.user
+package io.memorix.database.tables
 
 import org.jetbrains.exposed.sql.Table
 

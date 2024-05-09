@@ -2,10 +2,10 @@ package io.memorix.user
 
 import io.memorix.Authentication.PasswordAuthentication
 import io.memorix.database.DBConnectorFacade
+import io.memorix.database.tables.Users
 import io.memorix.messages.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.regexp
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import java.util.*
 

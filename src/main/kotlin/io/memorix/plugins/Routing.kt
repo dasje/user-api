@@ -10,7 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.memorix.messages.ErrorDetails
 import io.memorix.messages.ErrorTypes
-import io.memorix.user.user
+import io.memorix.routes.user
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
