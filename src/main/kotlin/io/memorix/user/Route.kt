@@ -6,6 +6,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.memorix.Routes
+import io.memorix.messages.NewUser
+import io.memorix.messages.OutgoingMessage
 import org.koin.ktor.ext.inject
 
 fun Route.user() {
@@ -31,7 +33,15 @@ fun Route.user() {
             }
 
             var res = repository.addUser(user)
-            call.respondText(res.toString(), status = HttpStatusCode.Created)
+            println(res)
+            when (res) {
+                is OutgoingMessage.Error ->
+                    call.respondText(res.toJson(), status = HttpStatusCode.BadRequest)
+                is OutgoingMessage.Success ->
+                    call.respond(HttpStatusCode.Accepted)
+                else -> call.respond(HttpStatusCode.NotImplemented)
+            }
+
         }
 //        delete("{id?}") {
 //            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
