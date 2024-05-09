@@ -11,6 +11,26 @@ import java.util.*
 class UserRepository(
     private val database: DBConnectorFacade
 ) : UserFacade {
+
+    /* Parse Query result into UserResponse model. */
+    private fun resultRowsToFoundUsers(resultRow: ResultRow) = UserResponse(
+        email = resultRow[Users.userEmail],
+        name = resultRow[Users.userEmail]
+    )
+
+    /* Parse Query result to NewUser response model. */
+    private fun resultRowToNewUser(resultRow: ResultRow) = NewUser(
+        name = resultRow[Users.userName],
+        email = resultRow[Users.userEmail],
+        password = resultRow[Users.hashedPassword],
+    )
+
+    /* Return True is user email already exsists. */
+    suspend fun findUserEmail(email: String): Boolean = database.dbQuery {
+        !Users.select { Users.userEmail eq email }.empty()
+    }
+
+    /* Return all users where provided name fragment matches name value in database. */
     override suspend fun findUsers(nameFragment: String): QueryUsersResponse {
         var selectedUsers: List<UserResponse> = database.dbQuery {
             Users.select { Users.userName like nameFragment }.map(::resultRowsToFoundUsers)
@@ -18,18 +38,13 @@ class UserRepository(
         return QueryUsersResponse(selectedUsers, selectedUsers.size)
     }
 
-    private fun resultRowsToFoundUsers(resultRow: ResultRow) = UserResponse(
-        email = resultRow[Users.userEmail],
-        name = resultRow[Users.userEmail]
-    )
-
-    suspend fun findUserEmail(email: String): Boolean = database.dbQuery {
-        !Users.select { Users.userEmail eq email }.empty()
-    }
-
+    /*
+        Return OutgoingMessage.Error if user email already exists in database.
+        User password is hashed and new user is added to database.
+        On success, return OutgoingMessage.Success.
+     */
     override suspend fun addUser(newUser: NewUser): OutgoingMessage<Boolean>? {
         if (findUserEmail(newUser.email)) {
-            println("USER EXISTS ${findUserEmail(newUser.name)}")
             return OutgoingMessage.Error(error = "Duplicate e-mail: ${newUser.email}")
         }
         var newId = UUID.randomUUID()
@@ -48,12 +63,7 @@ class UserRepository(
         return OutgoingMessage.Success(true)
     }
 
-    private fun resultRowToNewUser(resultRow: ResultRow) = NewUser(
-        name = resultRow[Users.userName],
-        email = resultRow[Users.userEmail],
-        password = resultRow[Users.hashedPassword],
-    )
-
+    /* Remove user by row id. */
     override suspend fun removeUser(id: UUID): Boolean = database.dbQuery {
         Users.deleteWhere() { Users.id eq id } > 0
     }

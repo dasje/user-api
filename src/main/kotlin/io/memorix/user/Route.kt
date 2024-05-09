@@ -27,13 +27,16 @@ fun Route.user() {
 //             call.respond(user)
 //         }
         post {
+            /* Return BadRequest request body is malformed. */
             val user = call.receiveNullable<NewUser>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-
+            /*
+             Return Error message if error raised during new user insert.
+             Return Accepted status is user added.
+            */
             var res = repository.addUser(user)
-            println(res)
             when (res) {
                 is OutgoingMessage.Error ->
                     call.respondText(res.toJson(), status = HttpStatusCode.BadRequest)

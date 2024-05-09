@@ -18,13 +18,15 @@ fun Application.configureRouting() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             when (cause) {
+                /* Respond with BadRequest status if message body is malformed. */
                 is BadRequestException ->
                     call.respond(
                         status = HttpStatusCode.BadRequest,
-                        message = Errors(error = ErrorTypes.UNPARSABLE_MESSAGE.errorDetail)
+                        message = Errors(error = ErrorTypes.UNPARSEABLE_MESSAGE.errorDetail)
                     )
+                /* Respond in all other cases with InternalServerError. */
+                else -> call.respondText(text = "500: ${cause}", status = HttpStatusCode.InternalServerError)
             }
-//            else -> call.respondText(text = "500: ${cause}", status = HttpStatusCode.InternalServerError)
         }
     }
     routing {

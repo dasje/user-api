@@ -8,5 +8,5 @@ data class Errors(
 )
 
 enum class ErrorTypes(val errorDetail: String) {
-    UNPARSABLE_MESSAGE("Invalid message structure.")
+    UNPARSEABLE_MESSAGE("Invalid message structure.")
 }

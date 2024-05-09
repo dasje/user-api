@@ -3,7 +3,6 @@ package io.memorix.user
 import io.memorix.messages.NewUser
 import io.memorix.messages.OutgoingMessage
 import io.memorix.messages.QueryUsersResponse
-import io.memorix.messages.ReturnNewUser
 import java.util.UUID
 
 interface UserFacade {
