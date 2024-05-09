@@ -14,18 +14,28 @@ fun Route.user() {
     val repository: UserRepository by inject()
 
     route(Routes.USERS_ROUTE) {
-//         get("/{id}") {
-//             val id = call.parameters["id"] ?: return@get call.respondText(
-//                 "Missing id",
-//                 status = HttpStatusCode.BadRequest
-//             )
-//             val user = userStorage.find { it.id == id } ?: return@get call.respondText(
-//                 "No customer with id $id",
-//                 status = HttpStatusCode.NotFound
-//             )
-//             print("This is the id ${id}")
-//             call.respond(user)
-//         }
+
+         get {
+             val queryValue = call.request.queryParameters["query"] ?: return@get call.respondText(
+                 "Missing query value.",
+                 status = HttpStatusCode.BadRequest
+             )
+             var limitValue = call.request.queryParameters["limit"] ?: return@get call.respondText(
+                 "Missing limit value.",
+                 status = HttpStatusCode.BadRequest
+             )
+             println("QUERY $queryValue, $limitValue")
+             val res = repository.findUsers(queryValue, limitValue.toInt())
+             println(res)
+             when (res) {
+                 is OutgoingMessage.Error ->
+                     call.respondText(res.toJson(), status = HttpStatusCode.BadRequest)
+                 is OutgoingMessage.SuccessUserResults ->
+                     call.respondText(res.toJson(), status = HttpStatusCode.Accepted)
+                 else -> call.respond(HttpStatusCode.NotImplemented)
+             }
+         }
+
         post {
             /* Return BadRequest request body is malformed. */
             val user = call.receiveNullable<NewUser>() ?: kotlin.run {
