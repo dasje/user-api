@@ -5,6 +5,7 @@ import io.memorix.database.DBConnectorFacade
 import io.memorix.messages.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.regexp
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import java.util.*
 
@@ -15,7 +16,7 @@ class UserRepository(
     /* Parse Query result into UserResponse model. */
     private fun resultRowsToFoundUsers(resultRow: ResultRow) = UserResponse(
         email = resultRow[Users.userEmail],
-        name = resultRow[Users.userEmail]
+        name = resultRow[Users.userName]
     )
 
     /* Parse Query result to NewUser response model. */
@@ -31,11 +32,17 @@ class UserRepository(
     }
 
     /* Return all users where provided name fragment matches name value in database. */
-    override suspend fun findUsers(nameFragment: String): QueryUsersResponse {
-        var selectedUsers: List<UserResponse> = database.dbQuery {
-            Users.select { Users.userName like nameFragment }.map(::resultRowsToFoundUsers)
+    override suspend fun findUsers(nameFragment: String, limitValue: Int): OutgoingMessage<QueryUsersResponse>? {
+        try {
+            var selectedUsers: List<UserResponse> = database.dbQuery {
+                Users.selectAll().andWhere { Users.userName regexp nameFragment }.limit(limitValue).map(::resultRowsToFoundUsers)
+            }
+            var userResponse = QueryUsersResponse(selectedUsers, selectedUsers.size)
+            return OutgoingMessage.SuccessUserResults(userResponse)
+        } catch (e: Exception) {
+            println(e)
+            return OutgoingMessage.Error(error = e.localizedMessage)
         }
-        return QueryUsersResponse(selectedUsers, selectedUsers.size)
     }
 
     /*
