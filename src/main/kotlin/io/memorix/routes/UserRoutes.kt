@@ -45,13 +45,11 @@ fun Route.user() {
                 call.respondText(ErrorTypes.REQUEST_BODY_MISSING.errorDetail, status = HttpStatusCode.BadRequest)
                 return@post
             }
-            println("USER $user")
             /*
              Return Error message if error raised during new user insert.
              Return Accepted status is user added.
             */
             var res = repository.addUser(user)
-            println("RES $res")
             when (res) {
                 is OutgoingMessage.Error ->
                     call.respondText(res.toJson(), contentType = ContentType.Application.Json, status = HttpStatusCode.BadRequest)
