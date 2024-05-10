@@ -14,6 +14,7 @@ import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import kotlin.test.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.memorix.database.DBConnector
 import org.junit.Rule
@@ -30,8 +31,6 @@ class ApplicationTest: KoinTest {
     var postgres = PostgreSQLContainer("postgres:16.2-alpine")
 
     private lateinit var dbConfig: List<Pair<String, String>>
-
-    private val userRepo: UserRepository by inject<UserRepository>()
 
     @Before
     fun before() {
@@ -53,28 +52,20 @@ class ApplicationTest: KoinTest {
         postgres.close()
     }
 
-    @JvmField
-    @RegisterExtension
-    val koinTestExtension = KoinTestExtension.create {
-        modules(
-            module {
-                single { DBConnector(
-                    dbConfig[0].second,
-                    dbConfig[3].second,
-                    dbConfig[1].second,
-                    dbConfig[4].second,
-                    dbConfig[2].second
-                ) }
-                single { UserRepository(get()) }
-            }
-        )
-    }
-
-//    @get:Rule
-//    val koinTestRule = KoinTestRule.create {
+//    @JvmField
+//    @RegisterExtension
+//    val koinTestExtension = KoinTestExtension.create {
 //        modules(
-//            io.memorix.modules.userDi,
-//            io.memorix.modules.databaseDi
+//            module {
+//                single { DBConnector(
+//                    dbConfig[0].second,
+//                    dbConfig[3].second,
+//                    dbConfig[1].second,
+//                    dbConfig[4].second,
+//                    dbConfig[2].second
+//                ) }
+//                single { UserRepository(get()) }
+//            }
 //        )
 //    }
 
@@ -95,14 +86,15 @@ class ApplicationTest: KoinTest {
         println("DB CONFIG2")
         println(dbConfig)
         startKoin(
-            
+
         )
 
         val response = client.post("/users") {
             contentType(ContentType.Application.Json)
-            setBody(NewUser(name = "John Doe", email = "test@users.com", password = "any-random-string"))
+            setBody(NewUser(name = "JSally", email = "teat@users.com", password = "any-random-string"))
         }
-
+        println("RES")
+        println(response.bodyAsText())
         assertEquals(HttpStatusCode.Accepted, response.status)
     }
 }
