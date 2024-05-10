@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.memorix.messages.ErrorTypes
 import io.memorix.messages.NewUser
 import io.memorix.messages.OutgoingMessage
 import io.memorix.user.UserRepository
@@ -41,22 +42,23 @@ fun Route.user() {
         post {
             /* Return BadRequest request body is malformed. */
             val user = call.receiveNullable<NewUser>() ?: kotlin.run {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respondText(ErrorTypes.REQUEST_BODY_MISSING.errorDetail, status = HttpStatusCode.BadRequest)
                 return@post
             }
+            println("USER $user")
             /*
              Return Error message if error raised during new user insert.
              Return Accepted status is user added.
             */
             var res = repository.addUser(user)
+            println("RES $res")
             when (res) {
                 is OutgoingMessage.Error ->
-                    call.respondText(res.toJson(), status = HttpStatusCode.BadRequest)
+                    call.respondText(res.toJson(), contentType = ContentType.Application.Json, status = HttpStatusCode.BadRequest)
                 is OutgoingMessage.Success ->
                     call.respond(HttpStatusCode.Accepted)
                 else -> call.respond(HttpStatusCode.NotImplemented)
             }
-
         }
 //        delete("{id?}") {
 //            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
