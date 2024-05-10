@@ -10,6 +10,7 @@ import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import kotlin.test.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.memorix.database.DBConnector
 import io.memorix.database.DBConnectorFacade
@@ -47,8 +48,6 @@ class ApplicationTest(): KoinTest {
     }
     var companion = Companion
 
-
-
     @get:Rule
     val koinTestRule = KoinTestRule.create {
         properties(
@@ -76,7 +75,6 @@ class ApplicationTest(): KoinTest {
                 json()
             }
         }
-        environment { }
         application {
             configureRouting()
             configureSerialization()
@@ -89,5 +87,89 @@ class ApplicationTest(): KoinTest {
         assertEquals(HttpStatusCode.Accepted, response.status)
     }
 
+    @Test
+    fun testPostDuplicateUser() = testApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        application {
+            configureRouting()
+            configureSerialization()
+        }
+        client.post("/users") {
+            contentType(ContentType.Application.Json)
+            setBody(NewUser(name = "JSally", email = "test@users.com", password = "any-random-string"))
+        }
+        val response = client.post("/users") {
+            contentType(ContentType.Application.Json)
+            setBody(NewUser(name = "JSally", email = "test@users.com", password = "any-random-string"))
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals("{\"error\":\"Duplicate e-mail: test@users.com\"}", response.bodyAsText())
+    }
+
+    @Test
+    fun testGetUsers() = testApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        application {
+            configureRouting()
+            configureSerialization()
+        }
+        client.post("/users") {
+            contentType(ContentType.Application.Json)
+            setBody(NewUser(name = "John Bercow", email = "jb@users.com", password = "any-random-string"))
+        }
+        client.post("/users") {
+            contentType(ContentType.Application.Json)
+            setBody(NewUser(name = "Johnny Rotten", email = "jr@users.com", password = "any-random-string"))
+        }
+        client.post("/users") {
+            contentType(ContentType.Application.Json)
+            setBody(NewUser(name = "Jon Boy", email = "jm@users.com", password = "any-random-string"))
+        }
+        val response = client.get("/users") {
+            contentType(ContentType.Application.Json)
+            parameter("query","John")
+            parameter("limit","3")
+        }
+
+        assertEquals(HttpStatusCode.Accepted, response.status)
+        assertEquals("{\"users\":[{\"email\":\"jb@users.com\",\"name\":\"John Bercow\"},{\"email\":\"jr@users.com\",\"name\":\"Johnny Rotten\"}],\"total\":2}", response.bodyAsText())
+    }
+
+    @Test
+    fun testGetMissingParameterValues() = testApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        application {
+            configureRouting()
+            configureSerialization()
+        }
+        val responseLimit = client.get("/users") {
+            contentType(ContentType.Application.Json)
+            parameter("query","John")
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, responseLimit.status)
+        assertEquals("Missing limit value.", responseLimit.bodyAsText())
+
+        val responseQuery = client.get("/users") {
+            contentType(ContentType.Application.Json)
+            parameter("limit","3")
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, responseQuery.status)
+        assertEquals("Missing query value.", responseQuery.bodyAsText())
+    }
 
 }
