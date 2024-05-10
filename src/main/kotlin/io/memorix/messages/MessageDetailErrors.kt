@@ -8,5 +8,6 @@ data class ErrorDetails(
 )
 
 enum class ErrorTypes(val errorDetail: String) {
-    UNPARSEABLE_MESSAGE("Invalid message structure.")
+    UNPARSEABLE_MESSAGE("Invalid message structure."),
+    REQUEST_BODY_MISSING("Request body is missing.")
 }

@@ -4,7 +4,7 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.memorix.modules.applicationDi
+import io.memorix.modules.databaseDi
 import io.memorix.plugins.*
 import io.memorix.modules.userDi
 import org.koin.core.Koin
@@ -41,7 +41,7 @@ fun startKoin(): Koin = startKoin {
     environmentProperties()
 
     modules(
-        applicationDi,
+        databaseDi,
         userDi
     )
 

@@ -6,7 +6,7 @@ import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 
-val applicationDi = module {
+val databaseDi = module {
     single<DBConnectorFacade> {
         DBConnector(
             dbHost = getProperty("DB_HOST"),
