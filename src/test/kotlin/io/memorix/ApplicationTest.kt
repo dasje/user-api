@@ -17,57 +17,73 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.memorix.database.DBConnector
+import io.memorix.database.DBConnectorFacade
+import io.memorix.user.UserFacade
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Rule
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.RegisterExtension
+//import org.junit.jupiter.api.AfterAll
+//import org.junit.jupiter.api.BeforeAll
+//import org.junit.jupiter.api.BeforeEach
+//import org.junit.jupiter.api.TestInstance
+//import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.dsl.module
-import org.koin.test.junit5.KoinTestExtension
+import org.koin.environmentProperties
+import org.koin.test.check.checkModules
+//import org.koin.test.junit5.KoinTestExtension
 import org.testcontainers.containers.PostgreSQLContainer
 
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ApplicationTest(): KoinTest {
+//    private val dbConnector by inject<DBConnectorFacade>()
+//    private val userRepo by inject<UserFacade>()
+    companion object {
+        var postgres = PostgreSQLContainer("postgres:16.2-alpine")
+        private lateinit var dbConfig: Map<String, String>
+        @JvmStatic
+        @BeforeClass
+        fun before(): Unit {
+            postgres.start()
+            dbConfig = mapOf(
+                "DB_HOST" to postgres.host.toString().trim(),
+                "DB_NAME" to postgres.databaseName.toString().trim(),
+                "DB_PASS" to postgres.password.toString().trim(),
+                "DB_PORT" to postgres.firstMappedPort.toString().trim(),
+                "DB_USER" to postgres.username.toString().trim()
+            )
+            println("DB CONFIG")
+            println(dbConfig)
+        }
 
-class ApplicationTest: KoinTest {
-    var postgres = PostgreSQLContainer("postgres:16.2-alpine")
+        @JvmStatic
+        @AfterClass
+        fun after(): Unit {
+            postgres.close()
+        }
+    }
+    var companion = Companion
 
-    private lateinit var dbConfig: List<Pair<String, String>>
 
-    @Before
-    fun before() {
-        postgres.start()
-        dbConfig = listOf(
-            Pair(first = "DB_HOST", second = postgres.getHost().toString().trim()),
-            Pair(first = "DB_NAME", second = postgres.getDatabaseName().toString().trim()),
-            Pair(first = "DB_PASS", second = postgres.getPassword().toString().trim()),
-            Pair(first = "DB_PORT", second = postgres.getFirstMappedPort().toString().trim()),
-            Pair(first = "DB_USER", second = postgres.getUsername().toString().trim())
+
+    @get:Rule
+    val koinTestRule = KoinTestRule.create {
+        properties(
+            dbConfig
         )
-        println("DB CONFIG")
-        println(dbConfig)
-        println(dbConfig[0].second)
+        environmentProperties()
+        modules(
+            module {
+                single<DBConnectorFacade> { DBConnector(
+                    getProperty("DB_HOST"),
+                    getProperty("DB_PORT"),
+                    getProperty("DB_NAME"),
+                    getProperty("DB_USER"),
+                    getProperty("DB_USER"))
+                }
+                single { UserRepository(get()) }
+            }
+        )
     }
-
-    @After
-    fun after() {
-        postgres.close()
-    }
-
-//    @JvmField
-//    @RegisterExtension
-//    val koinTestExtension = KoinTestExtension.create {
-//        modules(
-//            module {
-//                single { DBConnector(
-//                    dbConfig[0].second,
-//                    dbConfig[3].second,
-//                    dbConfig[1].second,
-//                    dbConfig[4].second,
-//                    dbConfig[2].second
-//                ) }
-//                single { UserRepository(get()) }
-//            }
-//        )
-//    }
 
     @Test
     fun testPostUser() = testApplication {
@@ -77,7 +93,12 @@ class ApplicationTest: KoinTest {
             }
         }
         environment {
-            config = MapApplicationConfig(dbConfig)
+//            config = config.mergeWith(
+//                MapApplicationConfig(
+//                    "DB_HOST" to companion.dbConfig.get("DB_HOST"),
+//                    "DB_PORT" to companion.dbConfig.get("DB_PORT")
+//                )
+//            )
         }
         application {
             configureRouting()
@@ -85,9 +106,9 @@ class ApplicationTest: KoinTest {
         }
         println("DB CONFIG2")
         println(dbConfig)
-        startKoin(
-
-        )
+//        println(configLoaders)
+//        startKoin()
+//        println(koinTestRule.koin.checkModules())
 
         val response = client.post("/users") {
             contentType(ContentType.Application.Json)
@@ -97,4 +118,6 @@ class ApplicationTest: KoinTest {
         println(response.bodyAsText())
         assertEquals(HttpStatusCode.Accepted, response.status)
     }
+
+
 }

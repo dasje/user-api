@@ -58,6 +58,8 @@ dependencies {
     testImplementation("io.insert-koin:koin-test-junit4:3.1.2")
     testImplementation("com.h2database:h2:$h2_version")
     testImplementation("com.zaxxer:HikariCP:$hikaricp_version")
-    testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
+    testImplementation("io.insert-koin:koin-test-junit4:$koin_version")
     testImplementation("org.testcontainers:postgresql:1.19.7")
+    testImplementation("io.mockk:mockk-jvm:1.13.8")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
 }
