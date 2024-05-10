@@ -59,4 +59,5 @@ dependencies {
     testImplementation("com.h2database:h2:$h2_version")
     testImplementation("com.zaxxer:HikariCP:$hikaricp_version")
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
+    testImplementation("org.testcontainers:postgresql:1.19.7")
 }
