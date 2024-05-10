@@ -1,5 +1,5 @@
 DB_HOST: "$DB_HOST:localhost"
 DB_PORT: "$DB_PORT:5433"
-DB_NAME: "$DB_NAME:test"
-DB_USER: "$DB_USER:test"
-DB_PASS: "$DB_PASS:test"
+DB_NAME: "$DB_NAME:users"
+DB_USER: "$DB_USER:root"
+DB_PASS: "$DB_PASS:admin"
