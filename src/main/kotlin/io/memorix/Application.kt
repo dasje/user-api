@@ -25,7 +25,7 @@ fun Application.module() {
 }
 
 fun startKoin(): Koin = startKoin {
-    logger(PrintLogger(Level.DEBUG))
+    logger(PrintLogger(Level.INFO))
 
     properties(
         dotenv {

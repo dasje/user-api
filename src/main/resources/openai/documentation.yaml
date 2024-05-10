@@ -1,0 +1,76 @@
+openapi: "3.0.3"
+info:
+  title: "User API"
+  description: "An API that allows you to store and read customers."
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:8080"
+paths:
+  /users:
+    post:
+      description: "Create a new user."
+      requestBody:
+        description: "A JSON object containing user information"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "202":
+          description: "Accepted"
+        "400":
+          description: "Bad Request"
+          content:
+            text/plain:
+              schema:
+                type: "json"
+              examples:
+                Example#1:
+                  value: "{ \"error\": \"Duplicate e-mail: <entered_email>\" }"
+    get:
+      description: "Returns a list of users by queried name."
+      parameters:
+        - name: "query"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "limit"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/QueryUsersResponse"
+components:
+  schemas:
+    NewUser:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        email:
+          type: "string"
+        password:
+          type: "string"
+    QueryUsersResponse:
+      type: "object"
+      properties:
+        users:
+          type: "object"
+          UserResponse:
+            type: "object"
+            properties:
+              email:
+                type: "string"
+              name:
+                type: "string"
+        total:
+          type: "string"
+          format: "int32"
