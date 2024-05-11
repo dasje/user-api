@@ -51,6 +51,8 @@ fun Route.user() {
             */
             var res = repository.addUser(user)
             when (res) {
+                is OutgoingMessage.ValidationError ->
+                    call.respondText(res.toJson(), contentType = ContentType.Application.Json, status = HttpStatusCode.UnprocessableEntity)
                 is OutgoingMessage.Error ->
                     call.respondText(res.toJson(), contentType = ContentType.Application.Json, status = HttpStatusCode.BadRequest)
                 is OutgoingMessage.Success ->
