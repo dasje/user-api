@@ -1,6 +1,6 @@
-# Ktor Starter project
+# User API
 
-This is the Vitec Memorix Ktor starter project. This project is meant as a starting point for small projects and coding assignments.
+This is an api server for storing and fetching users. It is based on the Vitec Memorix Ktor starter project.
 
 This project contains the following components:
 
@@ -10,13 +10,6 @@ This project contains the following components:
 - Dependency Injection: Koin - https://insert-koin.io/
 - Build tool: Gradle - https://gradle.org/
 
-## Using this template
-
-On https://github.com/vitec-memorix/ktor-starter:
-- In the top right, above the file list, click on "Use this template"
-- Select "Create a new repository"
-- Follow the steps to create a new repository from the template
-
 ## Setup
 
 Copy the example .env file and fill in a database password:
@@ -24,6 +17,19 @@ Copy the example .env file and fill in a database password:
 cp .env.dist .env
 ```
 You might want to change the database hostname to something more specific in both ```.env``` and ```docker-compose.yaml``` to prevent conflicts with other projects.
+
+## Starting the server
+
+The server is containerized with Docker and runs in a Docker network with the necessary depenedencies (see below). The server can be started using the following command:
+```shell
+docker compose up
+```
+
+## Manual testing with Swagger
+
+This project uses Swagger Docs to detail the API and allow manual testing of end points. 
+
+Once the server is running, navigate to `/swagger` to access the Swagger UI.
 
 ## Depencies
 
@@ -45,7 +51,3 @@ Beware: this will delete all the data in your database!
 docker compose down -v
 ```
 
-## Running the application
-```shell
-./gradlew run
-```
