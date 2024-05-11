@@ -18,4 +18,9 @@ sealed class OutgoingMessage<out T> {
         fun toJson(msg: Error = this): String = Json.encodeToString(msg)
     }
 
+    @Serializable
+    data class ValidationError(val error: String) : OutgoingMessage<Nothing>() {
+        fun toJson(msg: ValidationError = this): String = Json.encodeToString(msg)
+    }
+
 }
