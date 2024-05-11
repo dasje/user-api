@@ -37,8 +37,8 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
         user()
-        swaggerUI(path = "swagger", swaggerFile = "src\\main\\resources\\openai\\documentation.yaml")
-        openAPI(path="openapi", swaggerFile = "src\\main\\resources\\openai\\documentation.yaml") {
+        swaggerUI(path = "swagger", swaggerFile = "swagger_docs.yaml")
+        openAPI(path="openapi", swaggerFile = "swagger_docs.yaml") {
             codegen = StaticHtmlCodegen()
         }
     }
