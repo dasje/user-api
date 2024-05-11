@@ -1,8 +1,9 @@
 package io.memorix.user
 
-import io.memorix.Authentication.PasswordAuthentication
+import io.memorix.authentication.PasswordAuthentication
 import io.memorix.database.DBConnectorFacade
 import io.memorix.database.tables.Users
+import io.memorix.inputvalidation.UserInputValidation
 import io.memorix.messages.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -45,7 +46,7 @@ class UserRepository(
     }
 
     /*
-        Return OutgoingMessage.Error if user email already exists in database.
+        Return OutgoingMessage.Error if user email already exists in database or password format does not validate.
         User password is hashed and new user is added to database.
         On success, return OutgoingMessage.Success.
      */
@@ -53,11 +54,24 @@ class UserRepository(
         if (findUserEmail(newUser.email)) {
             return OutgoingMessage.Error(error = "Duplicate e-mail: ${newUser.email}")
         }
-        var newId = UUID.randomUUID()
-        var name = newUser.name
-        var email = newUser.email
-        var hashedPwd = PasswordAuthentication.hashPassword(newUser.password)
-        var insertStatement: InsertStatement<Number> = database.dbQuery {
+
+        val passwordVal = UserInputValidation.validatePassword(newUser.password)
+        when (passwordVal) {
+            is OutgoingMessage.ValidationError -> return passwordVal
+            else -> {}
+        }
+
+        val emailVal = UserInputValidation.validateEmail(newUser.email)
+        when (emailVal) {
+            is OutgoingMessage.ValidationError -> return emailVal
+            else -> {}
+        }
+
+        val newId = UUID.randomUUID()
+        val name = newUser.name
+        val email = newUser.email
+        val hashedPwd = PasswordAuthentication.hashPassword(newUser.password)
+        val insertStatement: InsertStatement<Number> = database.dbQuery {
             Users.insert {
                 it[Users.id] = newId
                 it[Users.userName] = name

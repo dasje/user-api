@@ -8,5 +8,6 @@ data class SuccessDetails(
 )
 
 enum class SuccessTypes(val successDetail: String) {
+    SUCCESS("Success."),
     USER_ADDED("User added.")
 }

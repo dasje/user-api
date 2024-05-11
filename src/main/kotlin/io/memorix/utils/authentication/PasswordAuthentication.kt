@@ -1,9 +1,10 @@
-package io.memorix.Authentication
+package io.memorix.authentication
 
 import org.mindrot.jbcrypt.BCrypt
 
 class PasswordAuthentication {
     companion object {
+
         fun hashPassword(password: String): String {
             val salt = BCrypt.gensalt()
             return BCrypt.hashpw(password, salt)

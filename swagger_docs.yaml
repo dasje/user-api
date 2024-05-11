@@ -28,6 +28,17 @@ paths:
               examples:
                 Example#1:
                   value: "{ \"error\": \"Duplicate e-mail: <entered_email>\" }"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            text/plain:
+              schema:
+                type: "json"
+              examples:
+                Example#1:
+                  value: "{ \"error\": \"Password must have at least eight characters!\" }"
+                Example#2:
+                  value: "{ \"error\": \"Invalid email address provided.\" }"
     get:
       description: "Returns a list of users by queried name."
       parameters:
