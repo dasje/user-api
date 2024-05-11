@@ -1,21 +1,20 @@
 version: '3.9'
 
 services:
-#  user_api:
-#    build: .
-#    platform: linux/amd64
-#    container_name: user_api
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    env_file:
-#      - .env
-#    depends_on:
-#      db:
-#        condition: service_healthy
-  db:
+  user_api:
+    build: .
+    container_name: user_api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=user_db
+      - DB_PORT=5432
+    env_file:
+      - .env
+  user_db:
     image: postgres:16.2-alpine
-    container_name: db
+    container_name: user_db
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
