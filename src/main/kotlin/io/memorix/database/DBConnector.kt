@@ -15,8 +15,6 @@ class DBConnector(
     val dbPass: String,
 ) : DBConnectorFacade {
     private fun connectToDB(): Database {
-        println("DBConnector being inited")
-        println("HERE $dbUser")
         val driver = "org.postgresql.Driver"
         val url = "jdbc:postgresql://$dbHost:$dbPort/$dbName?sslmode=disable"
 

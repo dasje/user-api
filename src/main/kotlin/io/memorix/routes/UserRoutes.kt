@@ -10,12 +10,16 @@ import io.memorix.messages.NewUser
 import io.memorix.messages.OutgoingMessage
 import io.memorix.user.UserRepository
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Route.user() {
     val repository: UserRepository by inject()
 
     route(Routes.USERS_ROUTE) {
 
+        /*
+            Fetch users from database, where query=user name, and limit=number of records to return.
+         */
          get {
              val queryValue = call.request.queryParameters["query"]
              if (queryValue.isNullOrBlank()) {
@@ -39,6 +43,9 @@ fun Route.user() {
              }
          }
 
+        /*
+            Add a new user to the database.
+         */
         post {
             /* Return BadRequest request body is malformed. */
             val user = call.receiveNullable<NewUser>() ?: kotlin.run {
@@ -60,14 +67,18 @@ fun Route.user() {
                 else -> call.respond(HttpStatusCode.NotImplemented)
             }
         }
-//        delete("{id?}") {
-//            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
-//            if (userStorage.removeIf {it.id == id }) {
-//                call.respondText("User successfully removed.", status = HttpStatusCode.Accepted)
-//            } else {
-//                call.respondText("Not found.", status = HttpStatusCode.NotFound)
-//            }
-//        }
+
+        /*
+            Delete a user using the row id.
+         */
+        delete {
+            val id = call.request.queryParameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            if (repository.removeUser(UUID.fromString(id))) {
+                call.respondText("User successfully removed.", status = HttpStatusCode.Accepted)
+            } else {
+                call.respondText("Not found.", status = HttpStatusCode.NotFound)
+            }
+        }
     }
 
 }

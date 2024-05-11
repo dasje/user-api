@@ -5,6 +5,10 @@ import io.memorix.messages.OutgoingMessage
 
 class UserInputValidation {
     companion object {
+        /*
+            Validate password before hashing.
+            Validate for password length, upper and lower cases, numbers and special characters.
+         */
         fun validatePassword(pwd: String): OutgoingMessage<Boolean> {
             val minMaxLength = """^[\s\S]{8,32}$""".toRegex()
             val upper = """[A-Z]""".toRegex()
@@ -21,6 +25,9 @@ class UserInputValidation {
             return OutgoingMessage.Success(true)
         }
 
+        /*
+            Validate email format. Email must be of format <string>@<string>.
+         */
         fun validateEmail(email: String): OutgoingMessage<Boolean> {
             val emailRegex = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$)""".toRegex()
 

@@ -47,6 +47,7 @@ class UserRepository(
 
     /*
         Return OutgoingMessage.Error if user email already exists in database or password format does not validate.
+        Return OutgoingMessage.ValidationError if email and password formats are incorrect.
         User password is hashed and new user is added to database.
         On success, return OutgoingMessage.Success.
      */

@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+/*
+    Sealed class with serializable return types.
+ */
 sealed class OutgoingMessage<out T> {
     @Serializable
     data class Success<out T>(val data: T) : OutgoingMessage<T>()
