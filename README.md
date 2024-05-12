@@ -18,6 +18,8 @@ cp .env.dist .env
 ```
 You might want to change the database hostname to something more specific in both ```.env``` and ```docker-compose.yaml``` to prevent conflicts with other projects.
 
+You might also want to change the database port to ```5433``` to prevent conflicts with local postgres instances.
+
 ## Starting the server
 
 The server is containerized with Docker and runs in a Docker network with the necessary depenedencies (see below). The server can be started using the following command:
