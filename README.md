@@ -16,7 +16,9 @@ Copy the example .env file and fill in a database password:
 ```shell
 cp .env.dist .env
 ```
-You might want to change the database hostname to something more specific in both ```.env``` and ```docker-compose.yaml``` to prevent conflicts with other projects.
+To build and run the server outside of the Docker environment, run only the service 'user_db' in docker-compose.
+The db host name in the .env is by default 'localhost'. This maps to the database container from outside the user-api network.
+To run the server with database dependency, it is not necessary to change the host name in the env file. This is overridden in the service setup in the docker-compose file.
 
 You might also want to change the database port to ```5433``` to prevent conflicts with local postgres instances.
 
